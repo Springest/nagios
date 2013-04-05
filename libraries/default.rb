@@ -36,3 +36,21 @@ def nagios_attr(name)
   node['nagios'][name]
 end
 
+def nagios_server_ips_of(srv_node)
+  ips = []
+  srv_node['nagios']['client']['server_ip_attributes'].each do |attr_path|
+    obj = srv_node
+
+    attr_path.split(".").each do |part|
+      if obj.has_key?(part)
+        obj = obj[part]
+      else
+        Chef::Log.warn "Nagios server does not have key nagios_server_node[#{attr_path.gsub(".","][")}]"
+      end
+    end
+
+    ips << obj
+  end
+
+  ips
+end
